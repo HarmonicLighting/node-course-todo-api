@@ -41,16 +41,16 @@ app.get('/todos/:id',(req,res)=>{
     //if not 404 - send back empty send
 
   if(!ObjectID.isValid(id)){
-    console.log('Not valid');
+    //console.log('Not valid');
     return res.status(404).send();
   }
   Todo.findById(id).then((todo)=>{
     if (!todo) {
-      console.log('Id '+id+' not found.');
+      //console.log('Id '+id+' not found.');
       return res.status(404).send();
     }
-    console.log('Id '+id+' found!');
-    res.send(todo);
+    //console.log('Id '+id+' found!');
+    res.send({todo});
   }).catch((e)=>{
     console.log('Error encountered');
     res.status(400).send();
