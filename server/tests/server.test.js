@@ -107,23 +107,43 @@ describe('GET /todos/:id',()=>{
 
 describe('DELETE /todos/:id',()=>{
   it('Should delete 1st todo doc',(done)=>{
+    const hexId = todos[0]._id.toHexString();
     request(app)
-      .delete('/todos/'+todos[0]._id.toHexString())
+      .delete('/todos/'+ hexId)
       .expect(200)
       .expect((res)=>{
-        expect(res.body.todo.text).toBe(todos[0].text)
+        expect(res.body.todo._id).toBe(hexId)
       })
-      .end(done);
+      .end((err,res)=>{
+        if(err){
+          return done(err);
+        }
+
+        Todo.findById(hexId).then((todo)=>{
+          expect(todo).toNotExist();
+          done();
+        }).catch((e) => done(e));
+      });
   });
 
   it('Should delete 2nd todo doc',(done)=>{
+    const hexId = todos[1]._id.toHexString();
     request(app)
-      .delete('/todos/'+todos[1]._id.toHexString())
+      .delete('/todos/'+ hexId)
       .expect(200)
       .expect((res)=>{
-        expect(res.body.todo.text).toBe(todos[1].text)
+        expect(res.body.todo._id).toBe(hexId)
       })
-      .end(done);
+      .end((err,res)=>{
+        if(err){
+          return done(err);
+        }
+
+        Todo.findById(hexId).then((todo)=>{
+          expect(todo).toNotExist();
+          done();
+        }).catch((e) => done(e));
+      });
   });
 
   it('Should return 404 if todo not found',(done)=>{
