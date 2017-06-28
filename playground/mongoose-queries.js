@@ -4,11 +4,13 @@ const {mongoose} = require('./../server/db/mongoose');
 const {Todo} = require('./../server/models/todo');
 const {User} = require('./../server/models/user');
 
-// var id = '595016fc35dae399d11634081';
+var id = '594c5bf6fc1cce937d67c644';
 //
-// if (!ObjectID.isValid(id)){
-//   console.log('Id is not valid');
-// }
+if (ObjectID.isValid(id)){
+  console.log('Id is valid');
+}else {
+  console.log('Id is not valid');
+}
 //
 // Todo.find({
 //   _id: id
