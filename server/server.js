@@ -73,7 +73,7 @@ app.delete('/todos/:id',(req,res)=>{
       return res.status(404).send();
     }
     //console.log('Id '+id+' found!');
-    res.send(todo);
+    res.send({todo});
   }).catch((e)=>{
     console.log('Error encountered while removing '+ id);
     res.status(400).send();
