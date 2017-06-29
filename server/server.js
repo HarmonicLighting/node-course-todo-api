@@ -1,4 +1,6 @@
-const PORT = process.env.PORT || 3000;
+require('./config/config');
+
+const PORT = process.env.PORT;
 
 const _ = require('lodash');
 
