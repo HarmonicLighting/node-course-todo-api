@@ -10,7 +10,9 @@ const todos = [{
   text:'First test todo'
 },{
   _id: new ObjectID(),
-  text:'Second test todo'
+  text:'Second test todo',
+  completed: true,
+  completedAt: 0
 }];
 
 beforeEach((done)=>{
@@ -105,34 +107,118 @@ describe('GET /todos/:id',()=>{
 
 });
 
-describe('DELETE /todos/:id',()=>{
-  it('Should delete 1st todo doc',(done)=>{
-    const hexId = todos[0]._id.toHexString();
+describe('PATCH /todos/:id',()=>{
+
+
+  it("Should update todo's text attribute",(done)=>{
+    var hexId = todos[0]._id.toHexString();
+    const text = 'Updated text';
+
     request(app)
-      .delete('/todos/'+ hexId)
+      .patch('/todos/' + hexId)
+      .send({text})
       .expect(200)
       .expect((res)=>{
-        expect(res.body.todo._id).toBe(hexId)
+        expect(res.body.todo._id).toBe(hexId);
+        expect(res.body.todo.text).toBe(text);
+        expect(res.body.todo.completed).toBe(false);
+        expect(res.body.todo.completedAt).toBe(null);
       })
       .end((err,res)=>{
         if(err){
           return done(err);
         }
-
         Todo.findById(hexId).then((todo)=>{
-          expect(todo).toNotExist();
+          expect(todo.text).toBe(text);
+          expect(todo.completed).toBe(false);
+          expect(todo.completedAt).toBe(null);
           done();
         }).catch((e) => done(e));
       });
+
   });
 
-  it('Should delete 2nd todo doc',(done)=>{
-    const hexId = todos[1]._id.toHexString();
+  it("Should update todo's completed attribute to true",(done)=>{
+    var hexId = todos[0]._id.toHexString();
+    const completed = true;
+
+    request(app)
+      .patch('/todos/' + hexId)
+      .send({completed})
+      .expect(200)
+      .expect((res)=>{
+        expect(res.body.todo._id).toBe(hexId);
+        expect(res.body.todo.text).toBe(todos[0].text);
+        expect(res.body.todo.completed).toBe(true);
+        expect(res.body.todo.completedAt).toBeA('number');
+      })
+      .end((err,res)=>{
+        if(err){
+          return done(err);
+        }
+        Todo.findById(hexId).then((todo)=>{
+          expect(todo.text).toBe(todos[0].text);
+          expect(todo.completed).toBe(true);
+          expect(todo.completedAt).toBeA('number');
+          done();
+        }).catch((e) => done(e));
+      });
+
+  });
+
+  it("Should update todo's completed attribute to false",(done)=>{
+    var hexId = todos[1]._id.toHexString();
+    const completed = false;
+
+    request(app)
+      .patch('/todos/' + hexId)
+      .send({completed})
+      .expect(200)
+      .expect((res)=>{
+        expect(res.body.todo._id).toBe(hexId);
+        expect(res.body.todo.text).toBe(todos[1].text);
+        expect(res.body.todo.completed).toBe(false);
+        expect(res.body.todo.completedAt).toBe(null);
+      })
+      .end((err,res)=>{
+        if(err){
+          return done(err);
+        }
+        Todo.findById(hexId).then((todo)=>{
+          expect(todo.text).toBe(todos[1].text);
+          expect(todo.completed).toBe(false);
+          expect(todo.completedAt).toBe(null);
+          done();
+        }).catch((e) => done(e));
+      });
+
+  });
+
+  it('Should return 404 if todo not found',(done)=>{
+    //Make sure you get the 404 back
+    request(app)
+      .patch('/todos/'+new ObjectID().toHexString())
+      .expect(404)
+      .end(done);
+  });
+
+  it('Should return 400 for non-object id\'s',(done)=>{
+    request(app)
+      .patch('/todos/'+new ObjectID().toHexString()+'0')
+      .expect(400)
+      .end(done);
+  });
+
+});
+
+describe('DELETE /todos/:id',()=>{
+  it('Should delete todo doc',(done)=>{
+    const hexId = todos[0]._id.toHexString();
     request(app)
       .delete('/todos/'+ hexId)
       .expect(200)
       .expect((res)=>{
-        expect(res.body.todo._id).toBe(hexId)
+        expect(res.body.todo._id).toBe(hexId);
       })
       .end((err,res)=>{
         if(err){
@@ -154,7 +240,7 @@ describe('DELETE /todos/:id',()=>{
       .end(done);
   });
 
-  it('Should return 404 for non-object ids',(done)=>{
+  it('Should return 404 for non-object id\'s',(done)=>{
     request(app)
       .delete('/todos/'+new ObjectID().toHexString()+'0')
       .expect(404)
