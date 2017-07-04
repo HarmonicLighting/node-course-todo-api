@@ -125,7 +125,6 @@ app.post('/users',(req,res)=>{
   });
 });
 
-// POST /users/login {email, password}
 app.post('/users/login',(req,res)=>{
   var body = _.pick(req.body,['email','password']);
   console.log('Email', body.email);
@@ -144,18 +143,6 @@ app.post('/users/login',(req,res)=>{
     res.status(400).send();
   });
 
-
-  // User.findOne({email}).then((user)=>{
-  //   if (!user) {
-  //     console.log('User with email '+body.email+' wasn\'t found');
-  //     return res.status(401).send();
-  //   }
-  //   console.log('User '+body.email+' found!');
-  //   res.send(user);
-  // }).catch((e)=>{
-  //   console.log('exception');
-  //   res.status(400).send(JSON.stringify(e,null,2));
-  // });
 });
 
 app.get('/users/me',authenticate,(req,res)=>{
