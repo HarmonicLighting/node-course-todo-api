@@ -131,15 +131,11 @@ app.get('/users/me',authenticate,(req,res)=>{
 
 app.post('/users/login',(req,res)=>{
   var body = _.pick(req.body,['email','password']);
-  console.log('Email', body.email);
-  console.log('Pass', body.password);
   if (!body.email || !body.password){
-    console.log('Error. Email or password not given.');
     return res.status(400).send();
   }
 
   User.findByCredentials(body.email,body.password).then((user)=>{
-    console.log('User '+body.email+' Authenticated!');
     return user.generateAuthToken().then((token) => {
       res.header('x-auth',token).send(user);
     });
