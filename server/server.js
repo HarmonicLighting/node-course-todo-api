@@ -162,9 +162,11 @@ app.post('/users/login', async (req,res) => {
   try {
     const user = await User.findByCredentials(body.email,body.password);
     const token = await user.generateAuthToken();
-    res.header('x-auth',token).send(user);
+    res.header('x-auth',token)
+    .header('Access-Control-Allow-Origin','*')
+    .send(user);
   } catch (e) {
-    res.status(400).send();
+    res.status(400).header('Access-Control-Allow-Origin','*').send();
   }
 });
 
